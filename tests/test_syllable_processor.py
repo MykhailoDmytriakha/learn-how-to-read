@@ -1,6 +1,6 @@
 import pytest
 import json
-from src.syllable_processor import process_text
+from src.syllable_processor import process_text, get_full_text_data, hyphenate_word_with_syllables, split_hyphenated_word_into_list
 
 def test_text1():
     text = "Мама мыла раму."
@@ -202,3 +202,49 @@ def test_text6():
         }
     }
     assert process_text(text) == expected
+
+def test_get_full_text_data():
+    text = "Привет, мир!"
+    expected_output = {
+        "levelName": "Полный текст",
+        "words": ["Привет", "мир", "Привет, мир!"]
+    }
+    assert get_full_text_data(text) == expected_output
+
+def test_hyphenate_word_with_syllables():
+    word = "семья"
+    expected_output = "семь-я"
+    assert hyphenate_word_with_syllables(word) == expected_output
+
+    word = "кот"
+    expected_output = "кот"
+    assert hyphenate_word_with_syllables(word) == expected_output
+
+    word = ""
+    expected_output = ""
+    assert hyphenate_word_with_syllables(word) == expected_output
+    
+    word = "папа"
+    expected_output = "па-па"
+    assert hyphenate_word_with_syllables(word) == expected_output
+    
+    word = "веселятся"
+    expected_output = "ве-се-лят-ся"
+    assert hyphenate_word_with_syllables(word) == expected_output
+    
+    word = "смеются"
+    expected_output = "сме-ют-ся"
+    assert hyphenate_word_with_syllables(word) == expected_output
+
+def test_split_hyphenated_word_into_list():
+    hyphenated_word = "семь-я"
+    expected_output = ["семь", "я"]
+    assert split_hyphenated_word_into_list(hyphenated_word) == expected_output
+
+    hyphenated_word = "кот"
+    expected_output = ["кот"]
+    assert split_hyphenated_word_into_list(hyphenated_word) == expected_output
+
+    hyphenated_word = ""
+    expected_output = [""]
+    assert split_hyphenated_word_into_list(hyphenated_word) == expected_output

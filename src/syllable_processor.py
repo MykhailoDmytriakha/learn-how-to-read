@@ -93,6 +93,34 @@ def split_syllables_hybrid(word: str) -> list[str]:
 
     return syllables
 
+def get_full_text_data(text: str) -> dict:
+    level_name = "Полный текст"
+    raw_tokens = text.split()
+    level3_words = []
+    for token in raw_tokens:
+        w3 = strip_trailing_punct(token)
+        if w3:
+            level3_words.append(w3)
+    full_line = unify_text_in_one_line(text)
+    level3_words.append(full_line)
+    return {
+        "levelName": level_name,
+        "words": level3_words
+    }
+
+def hyphenate_word_with_syllables(word: str) -> str:
+    cleaned_word = word.strip(string.punctuation + "«»„“…").lower()
+    if not cleaned_word:
+        return ""
+    syllables = split_syllables_hybrid(cleaned_word)
+    if len(syllables) > 1:
+        return "-".join(syllables)
+    else:
+        return syllables[0]
+
+def split_hyphenated_word_into_list(hyphenated_word: str) -> list[str]:
+    return hyphenated_word.split("-")
+
 def process_text(text: str) -> dict:
     level_name_1 = "Слоги"
     level_name_2 = "Слова по слогам"
