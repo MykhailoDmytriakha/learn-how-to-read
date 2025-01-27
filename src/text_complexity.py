@@ -1,7 +1,7 @@
 import math
 from collections import Counter
 from typing import List
-from src.syllable_processor import split_syllables_hybrid, is_vowel
+from syllable_processor import split_syllables_hybrid, is_vowel
 
 def calculate_text_complexity(text: str) -> int:
     words = [word.strip() for word in text.split() if word.strip()]
