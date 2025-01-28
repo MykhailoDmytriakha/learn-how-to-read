@@ -338,7 +338,7 @@ def show_text_selection():
             
             with cols[0]:
                 st.markdown(f"\n{truncate_text(phrase, 100)}")
-                st.caption(f"Сложность: {calculate_text_complexity(phrase)}%")
+                st.caption(f"Сложность: {calculate_text_complexity(phrase)}")
                 
             with cols[1]:
                 # Add checkbox with dynamic text
