@@ -5,7 +5,21 @@ from syllable_processor import split_syllables_hybrid, is_vowel
 def calculate_text_complexity(text: str) -> int:
     # Define the order of letters and their corresponding difficulty scores
     letter_order = "ауомсхршылнктипзйгвдбжеьяюёчэцфщъ"
-    letter_to_score = {char: idx for idx, char in enumerate(letter_order)}
+    letter_frequency = {
+        'а': 8.01, 'о': 7.28, 'е': 5.47, 'и': 5.45, 
+        'н': 4.32, 'т': 4.19, 'с': 4.00, 'р': 3.60,
+        'в': 3.20, 'л': 3.10, 'к': 2.90, 'м': 2.80,
+        'д': 2.50, 'п': 2.30, 'у': 2.10, 'я': 1.90,
+        'ы': 1.80, 'ь': 1.70, 'г': 1.60, 'з': 1.50,
+        'б': 1.40, 'ч': 1.30, 'й': 1.20, 'х': 1.10,
+        'ж': 1.00, 'ю': 0.90, 'ш': 0.80, 'ц': 0.70,
+        'щ': 0.60, 'э': 0.50, 'ф': 0.40, 'ъ': 0.30,
+        'ё': 0.20
+    }
+    letter_to_score = {
+        char: (idx * 3) * (1 - letter_frequency.get(char, 0) / 10) 
+        for idx, char in enumerate(letter_order)
+    }
     
     words = [word.strip() for word in text.split() if word.strip()]
     total_words = len(words)
@@ -15,6 +29,8 @@ def calculate_text_complexity(text: str) -> int:
     word_lengths: List[int] = []
     total_letter_score = 0  # Accumulator for letter order scores
     total_consecutive_vowels = 0
+    difficult_combinations = ['чк', 'чн', 'щн', 'жы', 'шы', 'чя', 'щя']
+    combination_bonus = 5  # Бонус за каждое сложное сочетание
 
     for word in words:
         word_lower = word.lower()
@@ -44,6 +60,15 @@ def calculate_text_complexity(text: str) -> int:
             )
             syllable_complexities.append(syll_complexity)
 
+        # Проверяем каждое сложное сочетание
+        for comb in difficult_combinations:
+            if comb in word_lower:
+                total_letter_score += combination_bonus
+
+        # Увеличиваем сложность для слов с мягким/твердым знаком
+        if 'ь' in word_lower or 'ъ' in word_lower:
+            total_letter_score += 5
+
     # 1. Syllable complexity score (0-50)
     avg_syll_complexity = (
         sum(syllable_complexities) / len(syllable_complexities) 
@@ -69,7 +94,7 @@ def calculate_text_complexity(text: str) -> int:
         letter_order_score = 0
     else:
         average_letter = total_letter_score / total_chars
-        letter_order_score = int(average_letter * (15 / 32))
+        letter_order_score = int(average_letter * (40 / (32*3)))
     letter_order_score = min(15, letter_order_score)
 
     total_score = (
