@@ -101,8 +101,16 @@ def load_read_status():
     """Load read status from file or create new if file doesn't exist"""
     if os.path.exists(READ_STATUS_FILE):
         with open(READ_STATUS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {phrase: False for phrase in SAMPLE_PHRASES}
+            read_status = json.load(f)
+    else:
+        read_status = {}
+    
+    # Ensure all phrases are in the dictionary
+    for phrase in SAMPLE_PHRASES:
+        if phrase not in read_status:
+            read_status[phrase] = False
+    
+    return read_status
 
 def save_read_status():
     """Save current read status to file"""
