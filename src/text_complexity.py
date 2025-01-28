@@ -39,7 +39,7 @@ def calculate_text_complexity(text: str) -> int:
 
         # Calculate letter order score for each character in the word
         for c in word_lower:
-            total_letter_score += letter_to_score.get(c, 0)
+            total_letter_score += int(letter_to_score.get(c, 0))
 
         # Syllable complexity processing
         for syll in syllables:
