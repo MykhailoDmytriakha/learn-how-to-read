@@ -1,5 +1,6 @@
 # Syllable Processor
 
+https://learn-how-to-read.streamlit.app/
 A Python application that processes Russian text to split words into syllables and provides different levels of text analysis.
 
 ## Installation
