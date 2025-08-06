@@ -2,8 +2,13 @@ import streamlit as st
 import json
 import logging
 import os
+from datetime import datetime
 from syllable_processor import process_text
-from text_complexity import calculate_text_complexity
+from text_complexity_improved import (
+    calculate_text_complexity_improved,
+    calculate_complexity_for_age,
+    get_complexity_breakdown
+)
 
 # Set page config for wide layout
 st.set_page_config(layout="wide")
@@ -21,12 +26,91 @@ logger = logging.getLogger(__name__)
 
 # Add this at the top of the file with other imports
 PHRASES_FILE = "phrases.json"
+CONFIG_FILE = "config.json"
 
 LEVEL_NAMES = {
     1: "Слоги",
     2: "Слова по слогам",
     3: "Полный текст"
 }
+
+def get_age_thresholds_info(age):
+    """Return formatted threshold information for the given age"""
+    thresholds = {
+        6: "✅ 0-20: Идеально | 👍 20-30: Хорошо | ⚠️ 30-40: Сложно | ❌ 40+: Очень сложно",
+        7: "✅ 0-25: Идеально | 👍 25-35: Хорошо | ⚠️ 35-45: Сложно | ❌ 45+: Очень сложно", 
+        8: "✅ 0-25: Идеально | 👍 25-35: Хорошо | ⚠️ 35-45: Сложно | ❌ 45+: Очень сложно",
+        9: "✅ 0-30: Идеально | 👍 30-40: Хорошо | ⚠️ 40-50: Сложно | ❌ 50+: Очень сложно",
+        10: "✅ 0-30: Идеально | 👍 30-40: Хорошо | ⚠️ 40-50: Сложно | ❌ 50+: Очень сложно",
+        11: "✅ 0-30: Идеально | 👍 30-40: Хорошо | ⚠️ 40-50: Сложно | ❌ 50+: Очень сложно"
+    }
+    return thresholds.get(age, thresholds[8])
+
+def get_complexity_emoji(complexity, age):
+    """Return emoji based on complexity score and age"""
+    if age <= 6:
+        if complexity <= 20: return "✅"
+        elif complexity <= 30: return "👍"
+        elif complexity <= 40: return "⚠️"
+        else: return "❌"
+    elif age <= 8:
+        if complexity <= 25: return "✅"
+        elif complexity <= 35: return "👍"  
+        elif complexity <= 45: return "⚠️"
+        else: return "❌"
+    else:  # 9+
+        if complexity <= 30: return "✅"
+        elif complexity <= 40: return "👍"
+        elif complexity <= 50: return "⚠️"
+        else: return "❌"
+
+def load_config():
+    """Load configuration from config file"""
+    try:
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+            logger.info(f"Configuration loaded from {CONFIG_FILE}")
+            return config
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logger.warning(f"Could not load config from {CONFIG_FILE}: {e}")
+        # Return default configuration
+        default_config = {
+            "child_age": 8,
+            "use_cognitive_load": True,
+            "last_updated": datetime.now().isoformat()
+        }
+        save_config(default_config)
+        return default_config
+
+def save_config(config):
+    """Save configuration to config file"""
+    try:
+        config["last_updated"] = datetime.now().isoformat()
+        with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(config, f, ensure_ascii=False, indent=2)
+        logger.info(f"Configuration saved to {CONFIG_FILE}")
+    except Exception as e:
+        logger.error(f"Could not save config to {CONFIG_FILE}: {e}")
+
+def update_phrases_complexity_and_sort():
+    """Update complexity for all phrases and sort them"""
+    if not st.session_state.phrases_data:
+        return
+    
+    logger.info("Updating complexity for all phrases and sorting")
+    
+    # Recalculate complexity for all phrases
+    for phrase in st.session_state.phrases_data:
+        phrase['complexity'] = calculate_text_complexity_improved(
+            phrase['text'], 
+            age=st.session_state.child_age,
+            include_cognitive_load=st.session_state.use_cognitive_load
+        )
+    
+    # Sort by complexity
+    st.session_state.phrases_data.sort(key=lambda x: x['complexity'])
+    
+    logger.info("Complexity updated and phrases sorted")
 
 STYLE = """
 <style>
@@ -310,14 +394,28 @@ def load_phrases():
                 phrase['is_read'] = phrase['is_read'].lower() == 'true'
                 logger.debug(f"Phrase {i}: Converted 'is_read' from string '{old_value}' to boolean {phrase['is_read']}")
             
+            # Add read_date field if missing
+            if 'read_date' not in phrase:
+                if phrase['is_read']:
+                    # For existing read phrases, set current date
+                    phrase['read_date'] = datetime.now().isoformat()
+                    logger.debug(f"Phrase {i}: Added read_date for existing read phrase")
+                else:
+                    phrase['read_date'] = None
+                    logger.debug(f"Phrase {i}: Added read_date as None for unread phrase")
+            
             # Count read/unread
             if phrase['is_read']:
                 read_count += 1
             else:
                 unread_count += 1
             
-            # ALWAYS calculate complexity - don't read from file
-            phrase['complexity'] = calculate_text_complexity(phrase['text'])
+            # ALWAYS calculate complexity using current settings
+            phrase['complexity'] = calculate_text_complexity_improved(
+                phrase['text'], 
+                age=st.session_state.get('child_age', 8),
+                include_cognitive_load=st.session_state.get('use_cognitive_load', True)
+            )
         
         # Sort by complexity
         data.sort(key=lambda x: x['complexity'])
@@ -401,6 +499,13 @@ def init_session_state():
         st.session_state.need_rerun = False
         logger.debug("Initialized need_rerun as False")
     
+    # Initialize age settings for complexity calculation from config file
+    if 'child_age' not in st.session_state or 'use_cognitive_load' not in st.session_state:
+        config = load_config()
+        st.session_state.child_age = config.get('child_age', 8)
+        st.session_state.use_cognitive_load = config.get('use_cognitive_load', True)
+        logger.info(f"Initialized settings from config: age={st.session_state.child_age}, cognitive_load={st.session_state.use_cognitive_load}")
+    
     # CRITICAL FIX: Only load phrases_data if it doesn't exist in session state
     # This prevents reloading data on every rerun and preserves user changes
     if 'phrases_data' not in st.session_state:
@@ -473,7 +578,8 @@ def handle_rating(rating):
                     if phrase['text'] == current_text:
                         old_status = phrase['is_read']
                         phrase['is_read'] = True
-                        logger.info(f"Changed phrase status from {old_status} to {phrase['is_read']}")
+                        phrase['read_date'] = datetime.now().isoformat()
+                        logger.info(f"Changed phrase status from {old_status} to {phrase['is_read']} with date {phrase['read_date']}")
                         save_phrases(st.session_state.phrases_data)
                         logger.info("Successfully saved phrase status after completion")
                         break
@@ -507,6 +613,82 @@ def show_text_selection():
     
     logger.info(f"Displaying {len(st.session_state.phrases_data)} phrases")
     
+    # Settings section
+    with st.expander("⚙️ Настройки сложности", expanded=False):
+        col_age, col_cognitive = st.columns([1, 1])
+        
+        with col_age:
+            new_age = st.selectbox(
+                "Возраст ребенка",
+                options=[6, 7, 8, 9, 10, 11],
+                index=[6, 7, 8, 9, 10, 11].index(st.session_state.child_age),
+                help="Возраст влияет на оценку сложности текста"
+            )
+            
+            if new_age != st.session_state.child_age:
+                st.session_state.child_age = new_age
+                
+                # Save configuration to file
+                config = {
+                    "child_age": st.session_state.child_age,
+                    "use_cognitive_load": st.session_state.use_cognitive_load
+                }
+                save_config(config)
+                
+                # Update complexity and sort phrases
+                update_phrases_complexity_and_sort()
+                
+                st.success(f"Возраст изменен на {new_age} лет. Сложность пересчитана и тексты пересортированы!")
+                logger.info(f"Age changed to {new_age}, complexity recalculated and phrases sorted")
+                st.rerun()  # Rerun to show new sorting
+        
+        with col_cognitive:
+            new_cognitive = st.checkbox(
+                "Учитывать длину текста",
+                value=st.session_state.use_cognitive_load,
+                help="Для младших детей (6-7 лет) длина текста сильно влияет на сложность"
+            )
+            
+            if new_cognitive != st.session_state.use_cognitive_load:
+                st.session_state.use_cognitive_load = new_cognitive
+                
+                # Save configuration to file
+                config = {
+                    "child_age": st.session_state.child_age,
+                    "use_cognitive_load": st.session_state.use_cognitive_load
+                }
+                save_config(config)
+                
+                # Update complexity and sort phrases
+                update_phrases_complexity_and_sort()
+                
+                status = "включен" if new_cognitive else "выключен"
+                st.success(f"Учет длины текста {status}. Сложность пересчитана и тексты пересортированы!")
+                logger.info(f"Cognitive load setting changed to {new_cognitive}, complexity recalculated and phrases sorted")
+                st.rerun()  # Rerun to show new sorting
+        
+        # Show current settings info
+        config = load_config()
+        last_updated = config.get('last_updated', 'Неизвестно')
+        try:
+            if last_updated != 'Неизвестно':
+                update_time = datetime.fromisoformat(last_updated)
+                last_updated_str = update_time.strftime('%d.%m.%Y %H:%M')
+            else:
+                last_updated_str = last_updated
+        except:
+            last_updated_str = last_updated
+            
+        st.info(f"""
+        **Текущие настройки:**
+        - Возраст: {st.session_state.child_age} лет
+        - Учет длины текста: {'✅ Включен' if st.session_state.use_cognitive_load else '❌ Выключен'}
+        - Последнее обновление: {last_updated_str}
+        
+        **Пороги сложности для {st.session_state.child_age} лет:**
+        {get_age_thresholds_info(st.session_state.child_age)}
+        """)
+    
     col1, col2 = st.columns([1, 1], gap="large")
     
     with col1:
@@ -518,7 +700,8 @@ def show_text_selection():
                 unread_count += 1
                 with st.container():
                     st.markdown(f"**{unread_count}. {truncate_text(phrase_data['text'], 100)}**")
-                    st.caption(f"Сложность: {phrase_data['complexity']}")
+                    complexity_emoji = get_complexity_emoji(phrase_data['complexity'], st.session_state.child_age)
+                    st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}")
                     
                     unique_key = f"unread_button_{idx}_{hash(phrase_data['text']) % 10000}"
                     
@@ -531,7 +714,8 @@ def show_text_selection():
                         logger.info(f"User marked phrase as READ: '{phrase_data['text'][:50]}...' (index: {idx})")
                         old_status = phrase_data['is_read']
                         phrase_data['is_read'] = True
-                        logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']}")
+                        phrase_data['read_date'] = datetime.now().isoformat()
+                        logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} with date {phrase_data['read_date']}")
                         
                         save_phrases(st.session_state.phrases_data)
                         
@@ -569,54 +753,79 @@ def show_text_selection():
     
     with col2:
         st.subheader("✅ Прочитанные тексты")
-        read_count = 0
-        for idx, phrase_data in enumerate(st.session_state.phrases_data):
-            if phrase_data['is_read']:
-                read_count += 1
-                with st.container():
-                    st.markdown(f"**{truncate_text(phrase_data['text'], 100)}**")
-                    st.caption(f"Сложность: {phrase_data['complexity']}")
+        
+        # Get read phrases and sort by read_date (newest first)
+        read_phrases = [
+            (idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data)
+            if phrase_data['is_read']
+        ]
+        
+        # Sort by read_date (newest first), handle None values
+        read_phrases.sort(
+            key=lambda x: x[1].get('read_date', ''), 
+            reverse=True
+        )
+        
+        read_count = len(read_phrases)
+        
+        for display_idx, (idx, phrase_data) in enumerate(read_phrases):
+            with st.container():
+                # Display phrase text
+                st.markdown(f"**{truncate_text(phrase_data['text'], 100)}**")
+                
+                # Display complexity and read date
+                read_date_str = ""
+                if phrase_data.get('read_date'):
+                    try:
+                        read_date = datetime.fromisoformat(phrase_data['read_date'])
+                        read_date_str = f" • Прочитано: {read_date.strftime('%d.%m.%Y %H:%M')}"
+                    except ValueError:
+                        read_date_str = f" • Прочитано: {phrase_data['read_date']}"
+                
+                complexity_emoji = get_complexity_emoji(phrase_data['complexity'], st.session_state.child_age)
+                st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}{read_date_str}")
+                
+                unique_key = f"read_button_{idx}_{hash(phrase_data['text']) % 10000}"
+                
+                if st.button(
+                    "📚 Отметить как непрочитанное",
+                    key=unique_key,
+                    type="secondary",
+                    use_container_width=True
+                ):
+                    logger.info(f"User marked phrase as UNREAD: '{phrase_data['text'][:50]}...' (index: {idx})")
+                    old_status = phrase_data['is_read']
+                    phrase_data['is_read'] = False
+                    phrase_data['read_date'] = None
+                    logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} and reset read_date")
                     
-                    unique_key = f"read_button_{idx}_{hash(phrase_data['text']) % 10000}"
+                    save_phrases(st.session_state.phrases_data)
                     
-                    if st.button(
-                        "📚 Отметить как непрочитанное",
-                        key=unique_key,
-                        type="secondary",
-                        use_container_width=True
-                    ):
-                        logger.info(f"User marked phrase as UNREAD: '{phrase_data['text'][:50]}...' (index: {idx})")
-                        old_status = phrase_data['is_read']
-                        phrase_data['is_read'] = False
-                        logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']}")
-                        
-                        save_phrases(st.session_state.phrases_data)
-                        
-                        try:
-                            with open(PHRASES_FILE, 'r', encoding='utf-8') as f:
-                                saved_data = json.load(f)
-                                for saved_phrase in saved_data:
-                                    if saved_phrase['text'] == phrase_data['text']:
-                                        if not saved_phrase.get('is_read', True):
-                                            logger.info("Verified: phrase was successfully saved as unread")
-                                        else:
-                                            logger.error("ERROR: phrase was not saved as unread!")
-                                        break
-                        except Exception as verify_error:
-                            logger.warning(f"Could not verify save: {verify_error}")
-                        
-                        logger.info("Successfully saved phrase status")
-                        st.success("Текст отмечен как непрочитанный! 📚")
-                        st.session_state.need_rerun = True
+                    try:
+                        with open(PHRASES_FILE, 'r', encoding='utf-8') as f:
+                            saved_data = json.load(f)
+                            for saved_phrase in saved_data:
+                                if saved_phrase['text'] == phrase_data['text']:
+                                    if not saved_phrase.get('is_read', True):
+                                        logger.info("Verified: phrase was successfully saved as unread")
+                                    else:
+                                        logger.error("ERROR: phrase was not saved as unread!")
+                                    break
+                    except Exception as verify_error:
+                        logger.warning(f"Could not verify save: {verify_error}")
                     
-                    st.button(
-                        "Читать снова",
-                        key=f"read_again_button_{idx}_{hash(phrase_data['text']) % 10000}",
-                        on_click=start_reading_session,
-                        args=(phrase_data['text'],),
-                        type="secondary",
-                        use_container_width=True
-                    )
+                    logger.info("Successfully saved phrase status")
+                    st.success("Текст отмечен как непрочитанный! 📚")
+                    st.session_state.need_rerun = True
+                
+                st.button(
+                    "Читать снова",
+                    key=f"read_again_button_{idx}_{hash(phrase_data['text']) % 10000}",
+                    on_click=start_reading_session,
+                    args=(phrase_data['text'],),
+                    type="secondary",
+                    use_container_width=True
+                )
         
         if read_count == 0:
             st.info("Пока нет прочитанных текстов")
@@ -726,6 +935,47 @@ def show_results():
     st.divider()
     col1, col2 = st.columns(2)
     with col1:
+        # Detailed complexity analysis
+        with st.expander("📊 Анализ сложности текста", expanded=False):
+            text = st.session_state.current_text
+            breakdown = get_complexity_breakdown(
+                text, 
+                age=st.session_state.child_age,
+                include_cognitive_load=st.session_state.use_cognitive_load
+            )
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**Общие показатели:**")
+                st.write(f"📝 Слов: {breakdown['words']}")
+                st.write(f"🎯 Возраст: {breakdown['age']} лет")
+                st.write(f"📊 Итоговая сложность: **{breakdown['total_complexity']:.1f}**")
+                
+                # Complexity rating
+                emoji = get_complexity_emoji(breakdown['total_complexity'], st.session_state.child_age)
+                if emoji == "✅":
+                    st.success("Идеально подходит для этого возраста!")
+                elif emoji == "👍":
+                    st.info("Хорошо подходит для практики")
+                elif emoji == "⚠️":
+                    st.warning("Может потребоваться помощь")
+                else:
+                    st.error("Слишком сложно для этого возраста")
+            
+            with col2:
+                st.markdown("**Компоненты сложности:**")
+                st.write(f"🗣️ Лингвистическая: {breakdown['linguistic_complexity']:.1f}")
+                if st.session_state.use_cognitive_load:
+                    st.write(f"🧠 Когнитивная нагрузка: {breakdown['cognitive_load']:.1f}")
+                
+                st.markdown("**Детализация:**")
+                st.write(f"• Слоги: {breakdown['syllable_component']:.1f}")
+                st.write(f"• Структура: {breakdown['structural_component']:.1f}")
+                st.write(f"• Лексика: {breakdown['lexical_component']:.1f}")
+                st.write(f"• Морфология: {breakdown['morphological_component']:.1f}")
+                st.write(f"• Фонетика: {breakdown['phonetic_component']:.1f}")
+        
         if st.button("Читать другой текст", type="primary", use_container_width=True):
             st.session_state.reading_state = None
             st.session_state.current_text = None

@@ -1,730 +1,912 @@
 [
   {
     "text": "Мама мыла раму.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:06:06.928332"
   },
   {
     "text": "Мама и папа дома.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:06:06.928343"
   },
   {
     "text": "Саша ест кашу.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:06:06.928347"
   },
   {
     "text": "На реке рыбаки.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:06:06.928350"
   },
   {
     "text": "Тома и Дима рисуют дом.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:06:06.928353"
   },
   {
     "text": "Рыба в воде.",
-    "is_read": true
+    "is_read": true,
+    "read_date": "2025-08-06T15:07:04.266501"
   },
   {
     "text": "Я рисую и ты рисуешь.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дома тепло и уютно.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама и папа обнимаются на кухне.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Кате дали мыло. Она мыла руки, лицо и шею. Руки, лицо и шея были белы.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дима и Таня идут домой.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы прыгаем на кровати.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Папа катит машинку.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Собираем пазл на полу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Саша ест горячую кашу с маслом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Таня и Дима играют мячом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Играем в догонялки!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Девочка рисует на бумаге.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Рыбаки сидят с удочками на реке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама любит папу. Папа любит маму.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама готовит суп. Папа читает книгу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "На улице дети играют. Даниил играет в мяч.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Собака лает, а кот бежит.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Папа дома и Витя дома. Не шуми, Витя, не буди папу, а сиди тихо. Люби, Витя, папу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Качели летят высоко.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил играет с мячом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дерево растёт в саду.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дорога ведёт к реке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети смеются и играют.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Наоми крутит педали синего велосипеда.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Пушистый кот лакает молоко из миски.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ароматный суп с овощами стоит на плите.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Алёна рисует радугу после дождя.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Таня гладит кота по спине.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Кто тут? Это я!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Съехал с горки — ура! — в сугроб.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама мыла раму мыльной пеной.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Собака громко лает на проезжающую машину.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети рисуют мелом радугу на асфальте.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Таня моет руки тёплой водой.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Сегодня хорошая погода. Я люблю кушать мороженое.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Летом жарко. Мы купаемся в речке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ведро с песком тяжёлое.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Строим секретную базу из одеял.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мыльные пузыри летят к облакам.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Золотая рыбка плавает в круглом аквариуме.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Серый дым поднимается из трубы дома.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Я рисую радугу цветными карандашами.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Собака бежит за мячом по мокрой траве.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Папа чинит проколотое велосипедное колесо.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "В капле воды под микроскопом плавают инфузории.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дима держит в руке карандаш.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Тётя и дядя едут домой.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Кошка пьёт молоко. Дети играют в парке. Мы любим лето.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Долго сидел я с удочкой на берегу. Не клюют у меня пескари.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Собака виляет хвостом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил строит высокую башню из кубиков.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы запускаем воздушного змея в парке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил объезжает лужи на велосипеде.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Пирог с яблоками пахнет вкусно.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Рыжий кот спит на подоконнике.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Яркое солнце освещает зелёное поле.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Серебристая луна светит в ночном окне.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Резиновый мяч упал в лужу с брызгами.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы ныряем в прохладную речную воду.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Девочка намыливает руки душистым мылом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы вешаем мокрые зонтики сушиться в прихожей.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Старинная карта лежит в кожаной папке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Сосульки тают, капая на подоконник.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дед тихо читает детям книгу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Наоми едет на велосипеде. Олег играет машинками. Все веселятся и смеются.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дом высокий.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ёж в траве.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Красная машина едет быстро.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Утром я умываюсь. Вечером чищу зубы.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Разноцветные мелки рисуют радугу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Красная гоночная машина мчится по трассе.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дождевые капли барабанят по подоконнику.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети лепят снеговика с морковным носом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мальчик тихо собирает пазл на ковре.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил объезжает на велосипеде большую лужу.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мыльные пузыри переливаются на солнце.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Вова ловит сачком яркую бабочку.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Тётя Даша делает вкусный суп.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Тоня ест сладкую спелую дыню.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Зимой падает снег. Дети лепят снеговика.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Муравей нашел большое зерно. Он не мог тащить его один.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мячик закатился под диван.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Весёлая гонка с друзьями во дворе.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Папа читает детям сказку перед сном.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама печёт яблочный пирог к чаю.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама зажигает ночник в детской комнате.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Я чищу зубы пастой с мятным вкусом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Корзинка с клубникой стоит на кухонном столе.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Пёс радостно виляет хвостом у ворот.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Кот запрыгнул на стол за кусочком сыра.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Бабушка ставит пирог с вишней на окошко остывать.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Лягушка прыгает с листа кувшинки в пруд.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Северное сияние мерцает над заснеженным лесом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Чёрные котяра играют с клубком шерсти.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Тётя дала Тане вкусный торт.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "У дома стоит большой дуб.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Даша дарит Тане красивый цветок.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы дружная семья.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Бабушка вяжет шарф, а дедушка читает.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "А дед под кустиком сидит и уже ведерко наловил. Сел и я в тени. Сразу пескари клевать стали.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Оказывается, на чистом месте тень от удочки видна. Вот и не шла к крючку хитрая рыба. ",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил смеётся громко.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Я ем клубничное мороженое в вафельном стаканчике.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мы всей семьёй играем в настольную игру.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Большой слон ест сено в зоопарке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Лопнувший шарик испугал спящего кота.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети прыгают в бассейн с разноцветными кругами.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Девочка находит брата за шторой в прятках.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дождевые капли танцуют на железной крыше.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Осенние листья кружатся в золотом вихре.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Альпинисты поднимаются по каменистой тропе.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ледяные сосульки сверкают на утреннем солнце.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Девочка прыгает в классики на асфальте.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дядя Толя водит красный автобус.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Луна светит ночью.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Большой слон стоит в зоопарке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Горячий шарик лопнул с треском!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Весёлые брызги в бассейне.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Сладкая клубника в корзинке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дедушка рассказывает сказки.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Друзья играют в парке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Высокий дом с красной крышей стоит на горке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Муравей тащит веточку в свой муравейник.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Старик ловит серебристых пескарей на удочку.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ролики громко стучат по асфальтовой дорожке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мальчишки играют в футбол с новым мячом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Яблочный пирог румянится в духовке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Утренний туман стелется над рекой.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Учёный в очках рассматривает кусок вулканической лавы.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ветер гудит в печной трубе холодным вечером.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети едят сладкие спелые фрукты.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ой! Мяч упал!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Муравей позвал на помощь товарищей. Вместе муравьи легко притащили зерно в муравейник.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Колючий ёжик бежит через лесную тропинку.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "В старой коробке блестят стеклянные бусины.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети стучат ложками по железным кастрюлям.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Снежок врезается в ствол сосны.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Муравьиная цепочка движется к сахарной крошке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дети гуляют в тёплый день.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "У Димы есть добрый кот.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Солнце светит ярко.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил бежит быстро!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Солнце светит ярко.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "На роликах качусь быстро-быстро!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Даниил бросает мяч в баскетбольное кольцо.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Воздушный змей парит высоко над парком.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "В ночной тишине стрекочут лесные сверчки.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Учитель демонстрирует извержение самодельного вулкана.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дождь стучит по крыше дома.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мама говорит: «Пора спать». Папа говорит: «Спокойной ночи».",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Прячемся за большим деревом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мяч взлетает вверх к облакам.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Бенгальские огни искрятся в новогоднюю ночь.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Фейерверк рассыпается звёздочками над городом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Тигр в клетке громко рычит.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Вкусный суп в кастрюле.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Жёлтый цыплёнок клюёт зёрнышки во дворе.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Данил бежит быстрее всех на спортивной площадке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Бумажный кораблик плывёт против течения ручья.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мальчик разворачивает книгу в блестящей обёртке.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дед и внук идут гулять.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Бабушка вяжет тёплый шарф из шерсти.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "День солнечный и ясный.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "За дверью слышен весёлый смех детей.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мальчик прячется за толстым дубом в прятках.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Жёлтый цыплёнок клюёт зёрна.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Прятки: кто спрятался за шторой?",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дождь идёт, и мы под зонтом.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Ура! Дождь идёт!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Прыжки через скакалку: раз-два-три!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Футбольный матч: гол забил Данилка!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дождь! Бежим домой быстро!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Кот спит тут.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мяч летит вверх.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Дым идёт вверх.",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   },
   {
     "text": "Мяч летит вверх!",
-    "is_read": false
+    "is_read": false,
+    "read_date": null
   }
 ]
