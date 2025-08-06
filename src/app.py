@@ -92,12 +92,12 @@ def save_config(config):
     except Exception as e:
         logger.error(f"Could not save config to {CONFIG_FILE}: {e}")
 
-def update_phrases_complexity_and_sort():
-    """Update complexity for all phrases and sort them"""
+def update_phrases_complexity():
+    """Update complexity for all phrases (no sorting - preserve original order)"""
     if not st.session_state.phrases_data:
         return
     
-    logger.info("Updating complexity for all phrases and sorting")
+    logger.info("Updating complexity for all phrases (preserving original file order)")
     
     # Recalculate complexity for all phrases
     for phrase in st.session_state.phrases_data:
@@ -107,10 +107,10 @@ def update_phrases_complexity_and_sort():
             include_cognitive_load=st.session_state.use_cognitive_load
         )
     
-    # Sort by complexity
-    st.session_state.phrases_data.sort(key=lambda x: x['complexity'])
+    # No sorting here - file order is preserved like a database
+    # UI will sort for display purposes only
     
-    logger.info("Complexity updated and phrases sorted")
+    logger.info("Complexity updated (file order preserved)")
 
 STYLE = """
 <style>
@@ -417,11 +417,11 @@ def load_phrases():
                 include_cognitive_load=st.session_state.get('use_cognitive_load', True)
             )
         
-        # Sort by complexity
-        data.sort(key=lambda x: x['complexity'])
+        # Do NOT sort here - preserve original file order
+        # Sorting will be done in UI for display purposes only
         
         logger.info(f"Processed {len(data)} phrases: {read_count} read, {unread_count} unread")
-        logger.info(f"Successfully loaded and processed phrases from {PHRASES_FILE}")
+        logger.info(f"Successfully loaded and processed phrases from {PHRASES_FILE} (preserving original order)")
         return data
         
     except (json.JSONDecodeError, FileNotFoundError) as e:
@@ -478,6 +478,56 @@ def save_phrases(phrases_data):
         logger.error(f"Exception type: {type(e).__name__}")
         logger.error(f"Exception details: {str(e)}")
         st.error(f"Ошибка сохранения данных: {e}")
+
+def add_new_text_to_collection(text):
+    """Add new text to phrases collection"""
+    logger.info(f"Adding new text to collection: '{text[:50]}...'")
+    
+    # Check if text already exists
+    text_normalized = text.strip()
+    for existing_phrase in st.session_state.phrases_data:
+        if existing_phrase['text'].strip() == text_normalized:
+            logger.warning(f"Text already exists in collection: '{text[:50]}...'")
+            st.warning(f"⚠️ Текст '{text[:100]}...' уже существует в коллекции!")
+            return False
+    
+    try:
+        # Create new phrase object
+        new_phrase = {
+            'text': text_normalized,
+            'is_read': False,
+            'read_date': None
+        }
+        
+        # Calculate complexity for the new phrase
+        new_phrase['complexity'] = calculate_text_complexity_improved(
+            text_normalized,
+            age=st.session_state.child_age,
+            include_cognitive_load=st.session_state.use_cognitive_load
+        )
+        
+        # Add to END of session state (no sorting here - preserve file order)
+        st.session_state.phrases_data.append(new_phrase)
+        
+        # Save to file (this will add to the end of the file)
+        save_phrases(st.session_state.phrases_data)
+        
+        logger.info(f"Successfully added new text to end of collection with complexity {new_phrase['complexity']:.1f}")
+        
+        # Show success message
+        complexity_emoji = get_complexity_emoji(new_phrase['complexity'], st.session_state.child_age)
+        st.success(f"✅ Текст добавлен в коллекцию! Сложность: {complexity_emoji} {new_phrase['complexity']:.1f}")
+        
+        # Force page refresh to show new text in correctly sorted unread column
+        # This will also clear the form automatically
+        st.session_state.need_rerun = True
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error adding new text to collection: {e}")
+        st.error(f"❌ Ошибка при добавлении текста: {e}")
+        return False
 
 def init_session_state():
     """Initialize session state variables"""
@@ -635,12 +685,12 @@ def show_text_selection():
                 }
                 save_config(config)
                 
-                # Update complexity and sort phrases
-                update_phrases_complexity_and_sort()
+                # Update complexity (preserve file order)
+                update_phrases_complexity()
                 
-                st.success(f"Возраст изменен на {new_age} лет. Сложность пересчитана и тексты пересортированы!")
-                logger.info(f"Age changed to {new_age}, complexity recalculated and phrases sorted")
-                st.rerun()  # Rerun to show new sorting
+                st.success(f"Возраст изменен на {new_age} лет. Сложность пересчитана!")
+                logger.info(f"Age changed to {new_age}, complexity recalculated (file order preserved)")
+                st.rerun()  # Rerun to show updated complexity values
         
         with col_cognitive:
             new_cognitive = st.checkbox(
@@ -659,13 +709,13 @@ def show_text_selection():
                 }
                 save_config(config)
                 
-                # Update complexity and sort phrases
-                update_phrases_complexity_and_sort()
+                # Update complexity (preserve file order)
+                update_phrases_complexity()
                 
                 status = "включен" if new_cognitive else "выключен"
-                st.success(f"Учет длины текста {status}. Сложность пересчитана и тексты пересортированы!")
-                logger.info(f"Cognitive load setting changed to {new_cognitive}, complexity recalculated and phrases sorted")
-                st.rerun()  # Rerun to show new sorting
+                st.success(f"Учет длины текста {status}. Сложность пересчитана!")
+                logger.info(f"Cognitive load setting changed to {new_cognitive}, complexity recalculated (file order preserved)")
+                st.rerun()  # Rerun to show updated complexity values
         
         # Show current settings info
         config = load_config()
@@ -693,58 +743,68 @@ def show_text_selection():
     
     with col1:
         st.subheader("📚 Непрочитанные тексты")
+        
+        # Get unread phrases and sort by complexity for display only
+        unread_phrases = [
+            (idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data)
+            if not phrase_data['is_read']
+        ]
+        
+        # Sort unread phrases by complexity for better learning progression
+        unread_phrases.sort(key=lambda x: x[1]['complexity'])
+        
         unread_count = 0
         unread_buttons = []  # Для шорткатов
-        for idx, phrase_data in enumerate(st.session_state.phrases_data):
-            if not phrase_data['is_read']:
-                unread_count += 1
-                with st.container():
-                    st.markdown(f"**{unread_count}. {truncate_text(phrase_data['text'], 100)}**")
-                    complexity_emoji = get_complexity_emoji(phrase_data['complexity'], st.session_state.child_age)
-                    st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}")
+        
+        for display_idx, (original_idx, phrase_data) in enumerate(unread_phrases):
+            unread_count += 1
+            with st.container():
+                st.markdown(f"**{unread_count}. {truncate_text(phrase_data['text'], 100)}**")
+                complexity_emoji = get_complexity_emoji(phrase_data['complexity'], st.session_state.child_age)
+                st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}")
+                
+                unique_key = f"unread_button_{original_idx}_{hash(phrase_data['text']) % 10000}"
+                
+                if st.button(
+                    "✅ Отметить как прочитанное",
+                    key=unique_key,
+                    type="secondary",
+                    use_container_width=True
+                ):
+                    logger.info(f"User marked phrase as READ: '{phrase_data['text'][:50]}...' (original index: {original_idx})")
+                    old_status = phrase_data['is_read']
+                    phrase_data['is_read'] = True
+                    phrase_data['read_date'] = datetime.now().isoformat()
+                    logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} with date {phrase_data['read_date']}")
                     
-                    unique_key = f"unread_button_{idx}_{hash(phrase_data['text']) % 10000}"
+                    save_phrases(st.session_state.phrases_data)
                     
-                    if st.button(
-                        "✅ Отметить как прочитанное",
-                        key=unique_key,
-                        type="secondary",
-                        use_container_width=True
-                    ):
-                        logger.info(f"User marked phrase as READ: '{phrase_data['text'][:50]}...' (index: {idx})")
-                        old_status = phrase_data['is_read']
-                        phrase_data['is_read'] = True
-                        phrase_data['read_date'] = datetime.now().isoformat()
-                        logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} with date {phrase_data['read_date']}")
-                        
-                        save_phrases(st.session_state.phrases_data)
-                        
-                        try:
-                            with open(PHRASES_FILE, 'r', encoding='utf-8') as f:
-                                saved_data = json.load(f)
-                                for saved_phrase in saved_data:
-                                    if saved_phrase['text'] == phrase_data['text']:
-                                        if saved_phrase.get('is_read', False):
-                                            logger.info("Verified: phrase was successfully saved as read")
-                                        else:
-                                            logger.error("ERROR: phrase was not saved as read!")
-                                        break
-                        except Exception as verify_error:
-                            logger.warning(f"Could not verify save: {verify_error}")
-                        
-                        logger.info("Successfully saved phrase status")
-                        st.success("Текст отмечен как прочитанный! ✅")
-                        st.session_state.need_rerun = True
+                    try:
+                        with open(PHRASES_FILE, 'r', encoding='utf-8') as f:
+                            saved_data = json.load(f)
+                            for saved_phrase in saved_data:
+                                if saved_phrase['text'] == phrase_data['text']:
+                                    if saved_phrase.get('is_read', False):
+                                        logger.info("Verified: phrase was successfully saved as read")
+                                    else:
+                                        logger.error("ERROR: phrase was not saved as read!")
+                                    break
+                    except Exception as verify_error:
+                        logger.warning(f"Could not verify save: {verify_error}")
                     
-                    start_button = st.button(
-                        "Начать чтение",
-                        key=f"unread_start_button_{idx}_{hash(phrase_data['text']) % 10000}",
-                        on_click=start_reading_session,
-                        args=(phrase_data['text'],),
-                        type="primary",
-                        use_container_width=True
-                    )
-                    unread_buttons.append(start_button)
+                    logger.info("Successfully saved phrase status")
+                    st.success("Текст отмечен как прочитанный! ✅")
+                    st.session_state.need_rerun = True
+                
+                start_button = st.button(
+                    "Начать чтение",
+                    key=f"unread_start_button_{original_idx}_{hash(phrase_data['text']) % 10000}",
+                    on_click=start_reading_session,
+                    args=(phrase_data['text'],),
+                    type="primary",
+                    use_container_width=True
+                )
+                unread_buttons.append(start_button)
         
         if unread_count == 0:
             st.info("Все тексты прочитаны! 🎉")
@@ -834,12 +894,39 @@ def show_text_selection():
     
     logger.info(f"show_text_selection completed: {unread_count} unread, {read_count} read phrases")
     
-    # Custom text input
+    # Add new text section
     st.divider()
-    with st.expander("Ввести свой текст", expanded=False):
-        custom_text = st.text_area("Введите текст:", height=150)
-        if st.button("Начать чтение", key="custom_start", use_container_width=True):
-            start_reading_session(custom_text)
+    with st.expander("➕ Добавить новый текст в коллекцию", expanded=False):
+        with st.form(key="add_text_form", clear_on_submit=True):
+            new_text = st.text_area("Введите новый текст для добавления в коллекцию:", height=150)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                save_only = st.form_submit_button("💾 Сохранить в коллекцию", use_container_width=True)
+            
+            with col2:
+                save_and_start = st.form_submit_button("📖 Сохранить и начать чтение", use_container_width=True)
+            
+            # Handle form submissions
+            if save_only or save_and_start:
+                if new_text.strip():
+                    success = add_new_text_to_collection(new_text.strip())
+                    if success and save_and_start:
+                        start_reading_session(new_text.strip())
+                else:
+                    st.error("Пожалуйста, введите текст!")
+    
+    # Custom text input for immediate reading
+    with st.expander("🚀 Быстрое чтение (без сохранения)", expanded=False):
+        with st.form(key="quick_reading_form", clear_on_submit=True):
+            custom_text = st.text_area("Введите текст для чтения:", height=150)
+            start_reading = st.form_submit_button("Начать чтение", use_container_width=True)
+            
+            if start_reading:
+                if custom_text.strip():
+                    start_reading_session(custom_text.strip())
+                else:
+                    st.error("Пожалуйста, введите текст!")
 
     # Info about shortcuts
     st.info("Шорткаты: В выборе — цифры 1-9 для старта чтения. В чтении — 1: Трудно, 2: Средне, 3: Отлично, Esc: Назад.")
