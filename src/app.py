@@ -9,6 +9,11 @@ from text_complexity_improved import (
     calculate_complexity_for_age,
     get_complexity_breakdown
 )
+from text_complexity_children_optimized import (
+    calculate_children_text_complexity_optimized,
+    get_children_complexity_breakdown,
+    compare_algorithms_children_vs_original
+)
 
 # Set page config for wide layout
 st.set_page_config(layout="wide")
@@ -77,6 +82,7 @@ def load_config():
         default_config = {
             "child_age": 8,
             "use_cognitive_load": True,
+            "use_children_algorithm": True,  # Новая настройка: использовать детский алгоритм
             "last_updated": datetime.now().isoformat()
         }
         save_config(default_config)
@@ -101,16 +107,62 @@ def update_phrases_complexity():
     
     # Recalculate complexity for all phrases
     for phrase in st.session_state.phrases_data:
-        phrase['complexity'] = calculate_text_complexity_improved(
+        phrase['complexity'] = calculate_text_complexity_universal(
             phrase['text'], 
             age=st.session_state.child_age,
-            include_cognitive_load=st.session_state.use_cognitive_load
+            include_cognitive_load=st.session_state.use_cognitive_load,
+            use_children_algorithm=st.session_state.get('use_children_algorithm', True)
         )
     
     # No sorting here - file order is preserved like a database
     # UI will sort for display purposes only
     
     logger.info("Complexity updated (file order preserved)")
+
+def calculate_text_complexity_universal(
+    text: str, 
+    age: int = 8, 
+    include_cognitive_load: bool = True, 
+    use_children_algorithm: bool = True
+) -> int:
+    """
+    Универсальная функция для расчета сложности текста
+    
+    Args:
+        text: Текст для анализа
+        age: Возраст ребенка (6-11 лет)
+        include_cognitive_load: Учитывать ли когнитивную нагрузку
+        use_children_algorithm: Использовать ли детский алгоритм
+        
+    Returns:
+        Сложность текста
+    """
+    if use_children_algorithm:
+        return calculate_children_text_complexity_optimized(
+            text, age=age, include_cognitive_load=include_cognitive_load
+        )
+    else:
+        return calculate_text_complexity_improved(
+            text, age=age, include_cognitive_load=include_cognitive_load
+        )
+
+def get_complexity_breakdown_universal(
+    text: str, 
+    age: int = 8, 
+    include_cognitive_load: bool = True, 
+    use_children_algorithm: bool = True
+) -> dict:
+    """
+    Универсальная функция для получения детального анализа сложности
+    """
+    if use_children_algorithm:
+        return get_children_complexity_breakdown(
+            text, age=age, include_cognitive_load=include_cognitive_load
+        )
+    else:
+        return get_complexity_breakdown(
+            text, age=age, include_cognitive_load=include_cognitive_load
+        )
 
 STYLE = """
 <style>
@@ -411,10 +463,11 @@ def load_phrases():
                 unread_count += 1
             
             # ALWAYS calculate complexity using current settings
-            phrase['complexity'] = calculate_text_complexity_improved(
+            phrase['complexity'] = calculate_text_complexity_universal(
                 phrase['text'], 
                 age=st.session_state.get('child_age', 8),
-                include_cognitive_load=st.session_state.get('use_cognitive_load', True)
+                include_cognitive_load=st.session_state.get('use_cognitive_load', True),
+                use_children_algorithm=st.session_state.get('use_children_algorithm', True)
             )
         
         # Do NOT sort here - preserve original file order
@@ -500,10 +553,11 @@ def add_new_text_to_collection(text):
         }
         
         # Calculate complexity for the new phrase
-        new_phrase['complexity'] = calculate_text_complexity_improved(
+        new_phrase['complexity'] = calculate_text_complexity_universal(
             text_normalized,
             age=st.session_state.child_age,
-            include_cognitive_load=st.session_state.use_cognitive_load
+            include_cognitive_load=st.session_state.use_cognitive_load,
+            use_children_algorithm=st.session_state.get('use_children_algorithm', True)
         )
         
         # Add to END of session state (no sorting here - preserve file order)
@@ -550,11 +604,12 @@ def init_session_state():
         logger.debug("Initialized need_rerun as False")
     
     # Initialize age settings for complexity calculation from config file
-    if 'child_age' not in st.session_state or 'use_cognitive_load' not in st.session_state:
+    if 'child_age' not in st.session_state or 'use_cognitive_load' not in st.session_state or 'use_children_algorithm' not in st.session_state:
         config = load_config()
         st.session_state.child_age = config.get('child_age', 8)
         st.session_state.use_cognitive_load = config.get('use_cognitive_load', True)
-        logger.info(f"Initialized settings from config: age={st.session_state.child_age}, cognitive_load={st.session_state.use_cognitive_load}")
+        st.session_state.use_children_algorithm = config.get('use_children_algorithm', True)
+        logger.info(f"Initialized settings from config: age={st.session_state.child_age}, cognitive_load={st.session_state.use_cognitive_load}, children_algorithm={st.session_state.use_children_algorithm}")
     
     # CRITICAL FIX: Only load phrases_data if it doesn't exist in session state
     # This prevents reloading data on every rerun and preserves user changes
@@ -665,9 +720,9 @@ def show_text_selection():
     
     # Settings section
     with st.expander("⚙️ Настройки сложности", expanded=False):
-        col_age, col_cognitive = st.columns([1, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
         
-        with col_age:
+        with col1:
             new_age = st.selectbox(
                 "Возраст ребенка",
                 options=[6, 7, 8, 9, 10, 11],
@@ -681,7 +736,8 @@ def show_text_selection():
                 # Save configuration to file
                 config = {
                     "child_age": st.session_state.child_age,
-                    "use_cognitive_load": st.session_state.use_cognitive_load
+                    "use_cognitive_load": st.session_state.use_cognitive_load,
+                    "use_children_algorithm": st.session_state.use_children_algorithm
                 }
                 save_config(config)
                 
@@ -692,7 +748,7 @@ def show_text_selection():
                 logger.info(f"Age changed to {new_age}, complexity recalculated (file order preserved)")
                 st.rerun()  # Rerun to show updated complexity values
         
-        with col_cognitive:
+        with col2:
             new_cognitive = st.checkbox(
                 "Учитывать длину текста",
                 value=st.session_state.use_cognitive_load,
@@ -705,7 +761,8 @@ def show_text_selection():
                 # Save configuration to file
                 config = {
                     "child_age": st.session_state.child_age,
-                    "use_cognitive_load": st.session_state.use_cognitive_load
+                    "use_cognitive_load": st.session_state.use_cognitive_load,
+                    "use_children_algorithm": st.session_state.use_children_algorithm
                 }
                 save_config(config)
                 
@@ -715,6 +772,32 @@ def show_text_selection():
                 status = "включен" if new_cognitive else "выключен"
                 st.success(f"Учет длины текста {status}. Сложность пересчитана!")
                 logger.info(f"Cognitive load setting changed to {new_cognitive}, complexity recalculated (file order preserved)")
+                st.rerun()  # Rerun to show updated complexity values
+        
+        with col3:
+            new_algorithm = st.checkbox(
+                "🆕 Детский алгоритм",
+                value=st.session_state.use_children_algorithm,
+                help="Улучшенный алгоритм специально для детской литературы (рекомендуется)"
+            )
+            
+            if new_algorithm != st.session_state.use_children_algorithm:
+                st.session_state.use_children_algorithm = new_algorithm
+                
+                # Save configuration to file
+                config = {
+                    "child_age": st.session_state.child_age,
+                    "use_cognitive_load": st.session_state.use_cognitive_load,
+                    "use_children_algorithm": st.session_state.use_children_algorithm
+                }
+                save_config(config)
+                
+                # Update complexity (preserve file order)
+                update_phrases_complexity()
+                
+                algorithm_name = "детский (улучшенный)" if new_algorithm else "стандартный"
+                st.success(f"Алгоритм изменен на {algorithm_name}. Сложность пересчитана!")
+                logger.info(f"Algorithm changed to children={new_algorithm}, complexity recalculated (file order preserved)")
                 st.rerun()  # Rerun to show updated complexity values
         
         # Show current settings info
@@ -729,14 +812,23 @@ def show_text_selection():
         except:
             last_updated_str = last_updated
             
+        algorithm_name = "🆕 Детский (улучшенный)" if st.session_state.use_children_algorithm else "📚 Стандартный"
+        
         st.info(f"""
         **Текущие настройки:**
         - Возраст: {st.session_state.child_age} лет
         - Учет длины текста: {'✅ Включен' if st.session_state.use_cognitive_load else '❌ Выключен'}
+        - Алгоритм: {algorithm_name}
         - Последнее обновление: {last_updated_str}
         
         **Пороги сложности для {st.session_state.child_age} лет:**
         {get_age_thresholds_info(st.session_state.child_age)}
+        
+        **🆕 Детский алгоритм включает:**
+        - Частотность букв в детской литературе
+        - Анализ сложности буквосочетаний (биграммы)
+        - Возрастная адаптация восприятия букв
+        - Научно обоснованные коэффициенты (исследование 2022 г.)
         """)
     
     col1, col2 = st.columns([1, 1], gap="large")
@@ -1025,18 +1117,21 @@ def show_results():
         # Detailed complexity analysis
         with st.expander("📊 Анализ сложности текста", expanded=False):
             text = st.session_state.current_text
-            breakdown = get_complexity_breakdown(
+            breakdown = get_complexity_breakdown_universal(
                 text, 
                 age=st.session_state.child_age,
-                include_cognitive_load=st.session_state.use_cognitive_load
+                include_cognitive_load=st.session_state.use_cognitive_load,
+                use_children_algorithm=st.session_state.use_children_algorithm
             )
             
             col1, col2 = st.columns(2)
             
             with col1:
+                algorithm_name = "🆕 Детский" if st.session_state.use_children_algorithm else "📚 Стандартный"
                 st.markdown("**Общие показатели:**")
                 st.write(f"📝 Слов: {breakdown['words']}")
                 st.write(f"🎯 Возраст: {breakdown['age']} лет")
+                st.write(f"🔧 Алгоритм: {algorithm_name}")
                 st.write(f"📊 Итоговая сложность: **{breakdown['total_complexity']:.1f}**")
                 
                 # Complexity rating
@@ -1060,8 +1155,29 @@ def show_results():
                 st.write(f"• Слоги: {breakdown['syllable_component']:.1f}")
                 st.write(f"• Структура: {breakdown['structural_component']:.1f}")
                 st.write(f"• Лексика: {breakdown['lexical_component']:.1f}")
-                st.write(f"• Морфология: {breakdown['morphological_component']:.1f}")
-                st.write(f"• Фонетика: {breakdown['phonetic_component']:.1f}")
+                
+                if st.session_state.use_children_algorithm:
+                    st.write(f"• 🆕 Биграммы: {breakdown.get('bigram_component', 0):.1f}")
+                    st.write(f"• Морфология: {breakdown['morphological_component']:.1f}")
+                else:
+                    st.write(f"• Морфология: {breakdown['morphological_component']:.1f}")
+                    st.write(f"• Фонетика: {breakdown['phonetic_component']:.1f}")
+                
+                # Показать дополнительную информацию для детского алгоритма
+                if st.session_state.use_children_algorithm and 'optimization_note' in breakdown:
+                    st.info(f"✨ {breakdown['optimization_note']}")
+                    
+                    # Возможность сравнить с оригинальным алгоритмом
+                    if st.button("🔄 Сравнить с оригинальным", key="compare_algorithms"):
+                        comparison = compare_algorithms_children_vs_original(
+                            text, 
+                            age=st.session_state.child_age,
+                            include_cognitive_load=st.session_state.use_cognitive_load
+                        )
+                        st.write("**Сравнение алгоритмов:**")
+                        st.write(f"📚 Оригинальный: {comparison['original_algorithm']:.1f}")
+                        st.write(f"🆕 Детский: {comparison['children_optimized']:.1f}")
+                        st.write(f"📊 Разница: {comparison['difference']:+.1f} ({comparison['improvement_percent']:+.1f}%)")
         
         if st.button("Читать другой текст", type="primary", use_container_width=True):
             st.session_state.reading_state = None
