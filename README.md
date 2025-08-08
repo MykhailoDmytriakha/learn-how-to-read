@@ -72,12 +72,11 @@ learn-how-to-read/
 │   ├── 🚀 app.py                   # Главное приложение Streamlit
 │   ├── 🧠 text_complexity_improved.py  # Улучшенный алгоритм сложности
 │   ├── 🆕 text_complexity_children_optimized.py  # Детский алгоритм (2022)
-│   ├── 📝 text_complexity.py       # Оригинальный алгоритм (legacy)
 │   └── 🔤 syllable_processor.py    # Обработка слогов
 ├── 
 ├── 📂 tests/                       # Тесты
 │   ├── test_syllable_processor.py
-│   └── test_text_complexity.py
+│   └── (удалён) test_text_complexity.py
 ├── 
 └── 📂 docs/                        # Документация
     ├── 📋 README.md                # Навигация по документации
@@ -97,7 +96,7 @@ pytest
 pytest -v
 
 # Тестирование конкретного модуля
-pytest tests/test_text_complexity.py
+pytest tests/test_syllable_processor.py
 ```
 
 ## 📚 Документация

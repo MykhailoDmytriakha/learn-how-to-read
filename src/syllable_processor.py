@@ -3,16 +3,20 @@ import string
 RUSSIAN_VOWELS = "аеёиоуыэюя"
 SINGLE_SYLLABLE_WORDS = {"ест", "все", "в", "мяч", "суп"}
 
+
 def is_vowel(ch: str) -> bool:
     return ch.lower() in RUSSIAN_VOWELS
+
 
 def strip_trailing_punct(word: str) -> str:
     punct_chars = set(string.punctuation + "«»„“…")
     return word.rstrip("".join(punct_chars))
 
+
 def unify_text_in_one_line(text: str) -> str:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     return " ".join(lines)
+
 
 def split_syllables_hybrid(word: str) -> list[str]:
     """
@@ -29,11 +33,7 @@ def split_syllables_hybrid(word: str) -> list[str]:
     w = word.lower()
 
     # (1) особые случаи
-    if (
-        w in SINGLE_SYLLABLE_WORDS
-        or not any(is_vowel(c) for c in w)
-        or sum(is_vowel(c) for c in w) == 1
-    ):
+    if w in SINGLE_SYLLABLE_WORDS or not any(is_vowel(c) for c in w) or sum(is_vowel(c) for c in w) == 1:
         return [w]
 
     # Иначе несколько гласных
@@ -55,7 +55,7 @@ def split_syllables_hybrid(word: str) -> list[str]:
         elif len(c_part) == 1:
             # Ровно 1 согласная => целиком в onset следующего слога
             # Но проверим, вдруг это 'ь'/'ъ' — тогда оставим в предыдущем?
-            # Однако по условию test6 "семья" -> "семь"+"я", 
+            # Однако по условию test6 "семья" -> "семь"+"я",
             # здесь 2 согласных "м"(2),"ь"(3). Потому len(c_part)=2 => другой случай.
             new_syll = c_part + w[next_v : next_v + 1]
             syllables.append(new_syll)
@@ -66,7 +66,7 @@ def split_syllables_hybrid(word: str) -> list[str]:
             c_part_prev = c_part[:-1]
             c_part_next = c_part[-1]
 
-            # Если последний символ = 'ь'/'ъ', 
+            # Если последний символ = 'ь'/'ъ',
             # то отдаём его тоже к предыдущему слогу (пример: "семья")
             if c_part_next in ("ь", "ъ"):
                 # Значит все согласные идут в предыдущий слог
@@ -83,7 +83,7 @@ def split_syllables_hybrid(word: str) -> list[str]:
     last_v = vowel_positions[-1]
     tail = w[last_v + 1 :]
     if tail:
-        # Если хвост начинается на 'ь'/'ъ', 
+        # Если хвост начинается на 'ь'/'ъ',
         # приклеим его к предыдущему слогу
         if tail[0] in ("ь", "ъ"):
             syllables[-1] += tail
@@ -92,6 +92,7 @@ def split_syllables_hybrid(word: str) -> list[str]:
             syllables[-1] += tail
 
     return syllables
+
 
 def get_full_text_data(text: str) -> dict:
     level_name = "Полный текст"
@@ -103,10 +104,8 @@ def get_full_text_data(text: str) -> dict:
             level3_words.append(w3)
     full_line = unify_text_in_one_line(text)
     level3_words.append(full_line)
-    return {
-        "levelName": level_name,
-        "words": level3_words
-    }
+    return {"levelName": level_name, "words": level3_words}
+
 
 def hyphenate_word_with_syllables(word: str) -> str:
     cleaned_word = word.strip(string.punctuation + "«»„“…").lower()
@@ -118,8 +117,10 @@ def hyphenate_word_with_syllables(word: str) -> str:
     else:
         return syllables[0]
 
+
 def split_hyphenated_word_into_list(hyphenated_word: str) -> list[str]:
     return hyphenated_word.split("-")
+
 
 def process_text(text: str) -> dict:
     level_name_1 = "Слоги"
@@ -159,16 +160,7 @@ def process_text(text: str) -> dict:
     level3_words.append(full_line)
 
     return {
-        1: {
-            "levelName": level_name_1,
-            "words": all_syllables
-        },
-        2: {
-            "levelName": level_name_2,
-            "words": hyphenated_words
-        },
-        3: {
-            "levelName": level_name_3,
-            "words": level3_words
-        }
+        1: {"levelName": level_name_1, "words": all_syllables},
+        2: {"levelName": level_name_2, "words": hyphenated_words},
+        3: {"levelName": level_name_3, "words": level3_words},
     }

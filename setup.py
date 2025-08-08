@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="syllable_processor",
@@ -7,4 +7,4 @@ setup(
     install_requires=[
         "pytest>=8.0.0",
     ],
-) 
+)
