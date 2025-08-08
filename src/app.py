@@ -115,135 +115,172 @@ def get_complexity_breakdown_universal(
     )
 
 
-STYLE = """
+BASE_STYLE = """
 <style>
-/* Target the specific button structure */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+:root {
+    --brand: #5ed2a2;
+    --brand-600: #46a37e;
+    --bg: #f7fbff;
+    --panel: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow: 0 6px 20px rgba(0,0,0,0.08);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 10px;
+    --space-xs: .375rem;
+    --space-sm: .75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+}
+
+html, body, [data-testid="stAppViewContainer"], [data-testid="stMarkdownContainer"] {
+    font-family: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif !important;
+    color: var(--text);
+}
+
+/* Buttons */
 button[data-testid="stBaseButton-primary"] {
-    background-color: #76c893 !important;
-    border-color: #76c893 !important;
+    background-color: var(--brand) !important;
+    border-color: var(--brand) !important;
     color: white !important;
-    transition: all 0.3s ease !important;
-    font-size: 1.2rem !important;
-    padding: 1rem !important;
+    transition: all 0.25s ease !important;
+    font-size: 1.15rem !important;
+    padding: .9rem 1.1rem !important;
     height: auto !important;
+    min-height: 56px !important;
+    border-radius: var(--radius-md) !important;
 }
-
 button[data-testid="stBaseButton-primary"]:hover {
-    background-color: #5a9c6f !important;
-    border-color: #5a9c6f !important;
+    background-color: var(--brand-600) !important;
+    border-color: var(--brand-600) !important;
 }
-
 button[data-testid="stBaseButton-secondary"] {
-    font-size: 1.2rem !important;
-    padding: 1rem !important;
+    font-size: 1.05rem !important;
+    padding: .85rem 1rem !important;
     height: auto !important;
+    min-height: 52px !important;
+    border-radius: var(--radius-md) !important;
 }
+button > div { color: inherit !important; }
+button:focus { box-shadow: 0 0 0 0.2rem rgba(94,210,162,.35) !important; outline: none !important; }
 
-/* Target the button's inner div */
-button > div {
-    color: inherit !important;
-}
-
-/* Add focus state */
-button:focus {
-    box-shadow: 0 0 0 0.2rem rgba(118, 200, 147, 0.5) !important;
-    outline: none !important;
-}
-
-/* Card styling */
+/* Cards */
 .stContainer {
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: transform 0.2s;
-    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    transition: transform .18s ease, box-shadow .18s ease;
+    background: var(--panel);
 }
-.stContainer:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+.stContainer:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 
 /* Progress bar */
-.stProgress > div > div > div > div {
-    background-color: #4CAF50 !important;
-}
+.stProgress > div > div > div > div { background-color: var(--brand) !important; }
 
-/* Word display base */
+/* Tabs */
+[data-baseweb="tab-list"] {
+    gap: .5rem !important;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .25rem;
+}
+button[role="tab"] {
+    border-radius: 999px !important;
+    padding: .5rem .9rem !important;
+    color: var(--muted) !important;
+    background: transparent !important;
+}
+button[role="tab"]:hover {
+    background: rgba(94,210,162,.08) !important;
+    color: var(--text) !important;
+}
+button[role="tab"][aria-selected="true"] {
+    color: var(--text) !important;
+    font-weight: 800 !important;
+    background: rgba(94,210,162,.15) !important;
+    box-shadow: inset 0 -3px 0 0 var(--brand) !important;
+}
+button[role="tab"]:focus { outline: none !important; box-shadow: none !important; }
+
+/* Word display */
 .word-display {
-    font-size: 96px;
+    font-size: 120px;
     text-align: center;
-    margin: 3rem 0;
-    padding: 2rem;
+    margin: var(--space-xl) 0;
+    padding: var(--space-xl);
     background: #f8f9fa;
-    border-radius: 15px;
+    border-radius: var(--radius-lg);
+}
+.word-display.bad-blink { animation: badBlink 0.5s ease-in-out forwards; }
+.word-display.medium-blink { animation: mediumBlink 0.5s ease-in-out forwards; }
+.word-display.good-blink { animation: goodBlink 0.5s ease-in-out forwards; }
+@keyframes badBlink { 0% {background:#f8f9fa;} 50% {background:#ffe4e6;} 100% {background:#f8f9fa;} }
+@keyframes mediumBlink { 0% {background:#f8f9fa;} 50% {background:#fff7d6;} 100% {background:#f8f9fa;} }
+@keyframes goodBlink { 0% {background:#f8f9fa;} 50% {background:#e6ffef;} 100% {background:#f8f9fa;} }
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .25rem .6rem;
+    border-radius: 999px;
+    font-size: .95rem;
+    background: #e8f8f1;
+    color: #1e7a57;
+    border: 1px solid #ccefe3;
 }
 
-/* Blink animations for each rating */
-.word-display.bad-blink {
-    animation: badBlink 0.5s ease-in-out forwards;
-}
-
-.word-display.medium-blink {
-    animation: mediumBlink 0.5s ease-in-out forwards;
-}
-
-.word-display.good-blink {
-    animation: goodBlink 0.5s ease-in-out forwards;
-}
-
-@keyframes badBlink {
-    0% { background-color: #f8f9fa; }
-    50% { background-color: #ffcccc; } /* Light red */
-    100% { background-color: #f8f9fa; }
-}
-
-@keyframes mediumBlink {
-    0% { background-color: #f8f9fa; }
-    50% { background-color: #fffbcc; } /* Light yellow */
-    100% { background-color: #f8f9fa; }
-}
-
-@keyframes goodBlink {
-    0% { background-color: #f8f9fa; }
-    50% { background-color: #ccffcc; } /* Light green */
-    100% { background-color: #f8f9fa; }
-}
-
-/* Responsive columns - wider and adaptive */
+/* Responsive */
 @media (max-width: 768px) {
-    [data-testid="column"] {
-        width: 100% !important;
-        margin-bottom: 2rem !important;
-        padding: 0 0.5rem !important;
-    }
-    .stButton > button {
-        font-size: 1.5rem !important;
-        padding: 1.5rem !important;
-    }
-    .word-display {
-        font-size: 72px !important; /* Smaller for mobile */
-    }
+    [data-testid="column"] { width: 100% !important; margin-bottom: var(--space-lg) !important; padding: 0 .5rem !important; }
+    .stButton > button { font-size: 1.15rem !important; padding: 1.1rem 1.25rem !important; }
+    .word-display { font-size: 84px !important; }
 }
-
 @media (min-width: 769px) and (max-width: 1200px) {
-    [data-testid="column"] {
-        width: calc(50% - 1rem) !important;
-        margin: 0 0.5rem !important;
-    }
+    [data-testid="column"] { width: calc(50% - 1rem) !important; margin: 0 .5rem !important; }
 }
-
 @media (min-width: 1201px) {
-    [data-testid="column"] {
-        width: calc(50% - 3rem) !important;
-        margin: 0 1.5rem !important;
-    }
+    [data-testid="column"] { width: calc(50% - 3rem) !important; margin: 0 1.5rem !important; }
 }
 
-/* Improve spacing */
-main {
-    max-width: 95% !important;
-    margin: 0 auto !important;
+main { max-width: 95% !important; margin: 0 auto !important; }
+</style>
+"""
+
+CHILD_STYLE = """
+<style>
+/* Child-friendly theme overrides */
+:root {
+    --brand-green: #5ed2a2;
+    --brand-green-dark: #46a37e;
+    --panel-bg: #f7fbff;
+}
+button[data-testid="stBaseButton-primary"] {
+    background-color: var(--brand-green) !important;
+    border-color: var(--brand-green) !important;
+}
+button[data-testid="stBaseButton-primary"]:hover {
+    background-color: var(--brand-green-dark) !important;
+    border-color: var(--brand-green-dark) !important;
+}
+.word-display {
+    background: var(--panel-bg) !important;
+}
+/* Badge style */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    background: #e8f8f1;
+    color: #1e7a57;
+    border: 1px solid #ccefe3;
 }
 </style>
 """
@@ -487,7 +524,10 @@ def handle_rating(rating):
 def show_text_selection():
     """Display text selection screen"""
     logger.info("Starting show_text_selection function")
-    st.markdown(STYLE, unsafe_allow_html=True)
+    # Apply base style + optional child theme
+    st.markdown(BASE_STYLE, unsafe_allow_html=True)
+    if st.session_state.get("child_mode"):
+        st.markdown(CHILD_STYLE, unsafe_allow_html=True)
 
     st.title("Тренажер чтения")
 
@@ -513,10 +553,212 @@ def show_text_selection():
 
     logger.info(f"Displaying {len(st.session_state.phrases_data)} phrases")
 
-    # Settings section
-    with st.expander("⚙️ Настройки сложности", expanded=False):
-        col1, col2, col3 = st.columns([1, 1, 1])
+    tab_texts, tab_collection, tab_add, tab_quick, tab_settings = st.tabs(
+        [
+            "📚 Тексты",
+            "📜 Коллекция",
+            "➕ Добавить",
+            "🚀 Быстрое чтение",
+            "⚙️ Настройки",
+        ]
+    )
 
+    # ============ TAB: ТЕКСТЫ ============
+    with tab_texts:
+        col1, col2 = st.columns([1, 1], gap="large")
+
+        with col1:
+            st.subheader("📚 Непрочитанные тексты")
+
+            # Search & controls
+            filter_query = st.text_input("Поиск по непрочитанным", key="unread_search", placeholder="Начните вводить текст...")
+
+            # Get unread phrases and sort by complexity for display only
+            unread_phrases = [
+                (idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data) if not phrase_data["is_read"]
+            ]
+
+            # Text filter
+            if filter_query:
+                q = filter_query.lower()
+                unread_phrases = [(i, p) for i, p in unread_phrases if q in p["text"].lower()]
+
+            # Sort unread phrases by complexity for better learning progression
+            unread_phrases.sort(key=lambda x: x[1]["complexity"])
+
+            # Limit to next N by complexity unless user wants to see all
+            total_unread = len(unread_phrases)
+            if st.session_state.show_all_phrases:
+                display_unread_phrases = unread_phrases
+            else:
+                display_unread_phrases = unread_phrases[: st.session_state.phrases_limit]
+
+            ctrl_col1, ctrl_col2 = st.columns([2, 1])
+            with ctrl_col1:
+                st.caption(f"Показано {len(display_unread_phrases)} из {total_unread} по возрастанию сложности")
+            with ctrl_col2:
+                toggle_label = "Показать все тексты" if not st.session_state.show_all_phrases else "Показать только 20"
+                if st.button(toggle_label, key="toggle_show_all_unread", type="secondary", use_container_width=True):
+                    st.session_state.show_all_phrases = not st.session_state.show_all_phrases
+                    st.rerun()
+
+            unread_count = 0
+            for _display_idx, (original_idx, phrase_data) in enumerate(display_unread_phrases):
+                unread_count += 1
+                with st.container(border=True):
+                    title = truncate_text(phrase_data["text"], 120)
+                    complexity_emoji = get_complexity_emoji(phrase_data["complexity"], st.session_state.child_age)
+                    st.markdown(
+                        f"**{unread_count}. {title}**  <span class='badge'>Сложность: {complexity_emoji} {phrase_data['complexity']}</span>",
+                        unsafe_allow_html=True,
+                    )
+
+                    c1, c2 = st.columns([1, 1])
+                    with c1:
+                        start_key = f"unread_start_button_{original_idx}_{hash(phrase_data['text']) % 10000}"
+                        st.button(
+                            "Начать чтение",
+                            key=start_key,
+                            on_click=start_reading_session,
+                            args=(phrase_data["text"],),
+                            type="primary",
+                            use_container_width=True,
+                        )
+                    with c2:
+                        mark_key = f"unread_button_{original_idx}_{hash(phrase_data['text']) % 10000}"
+                        if st.button("✅ Отметить как прочитанное", key=mark_key, type="secondary", use_container_width=True):
+                            logger.info(f"User marked phrase as READ: '{phrase_data['text'][:50]}...' (original index: {original_idx})")
+                            old_status = phrase_data["is_read"]
+                            phrase_data["is_read"] = True
+                            phrase_data["read_date"] = datetime.now().isoformat()
+                            logger.info(
+                                f"Changed phrase status from {old_status} to {phrase_data['is_read']} with date {phrase_data['read_date']}"
+                            )
+                            save_phrases(st.session_state.phrases_data)
+                            try:
+                                with open(PHRASES_FILE, encoding="utf-8") as f:
+                                    saved_data = json.load(f)
+                                    for saved_phrase in saved_data:
+                                        if saved_phrase["text"] == phrase_data["text"]:
+                                            if saved_phrase.get("is_read", False):
+                                                logger.info("Verified: phrase was successfully saved as read")
+                                            else:
+                                                logger.error("ERROR: phrase was not saved as read!")
+                                            break
+                            except Exception as verify_error:
+                                logger.warning(f"Could not verify save: {verify_error}")
+                            logger.info("Successfully saved phrase status")
+                            st.success("Текст отмечен как прочитанный! ✅")
+                            st.session_state.need_rerun = True
+
+            if len(display_unread_phrases) == 0:
+                st.info("Все тексты прочитаны! 🎉")
+
+            logger.info(f"Displayed {unread_count} unread phrases in left column")
+
+        with col2:
+            st.subheader("✅ Прочитанные тексты")
+            read_phrases = [(idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data) if phrase_data["is_read"]]
+            read_phrases.sort(key=lambda x: x[1].get("read_date", ""), reverse=True)
+            read_count = len(read_phrases)
+
+            for _display_idx, (idx, phrase_data) in enumerate(read_phrases):
+                with st.container(border=True):
+                    st.markdown(f"**{truncate_text(phrase_data['text'], 120)}**")
+                    read_date_str = ""
+                    if phrase_data.get("read_date"):
+                        try:
+                            read_date = datetime.fromisoformat(phrase_data["read_date"])
+                            read_date_str = f" • Прочитано: {read_date.strftime('%d.%m.%Y %H:%M')}"
+                        except ValueError:
+                            read_date_str = f" • Прочитано: {phrase_data['read_date']}"
+                    complexity_emoji = get_complexity_emoji(phrase_data["complexity"], st.session_state.child_age)
+                    st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}{read_date_str}")
+
+                    c1, c2 = st.columns([1, 1])
+                    with c1:
+                        st.button(
+                            "Читать снова",
+                            key=f"read_again_button_{idx}_{hash(phrase_data['text']) % 10000}",
+                            on_click=start_reading_session,
+                            args=(phrase_data["text"],),
+                            type="secondary",
+                            use_container_width=True,
+                        )
+                    with c2:
+                        unique_key = f"read_button_{idx}_{hash(phrase_data['text']) % 10000}"
+                        if st.button("📚 Отметить как непрочитанное", key=unique_key, type="secondary", use_container_width=True):
+                            logger.info(f"User marked phrase as UNREAD: '{phrase_data['text'][:50]}...' (index: {idx})")
+                            old_status = phrase_data["is_read"]
+                            phrase_data["is_read"] = False
+                            phrase_data["read_date"] = None
+                            logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} and reset read_date")
+                            save_phrases(st.session_state.phrases_data)
+                            try:
+                                with open(PHRASES_FILE, encoding="utf-8") as f:
+                                    saved_data = json.load(f)
+                                    for saved_phrase in saved_data:
+                                        if saved_phrase["text"] == phrase_data["text"]:
+                                            if not saved_phrase.get("is_read", True):
+                                                logger.info("Verified: phrase was successfully saved as unread")
+                                            else:
+                                                logger.error("ERROR: phrase was not saved as unread!")
+                                            break
+                            except Exception as verify_error:
+                                logger.warning(f"Could not verify save: {verify_error}")
+                            logger.info("Successfully saved phrase status")
+                            st.success("Текст отмечен как непрочитанный! 📚")
+                            st.session_state.need_rerun = True
+
+            if read_count == 0:
+                st.info("Пока нет прочитанных текстов")
+
+            logger.info(f"Displayed {read_count} read phrases in right column")
+
+        st.caption("Шорткаты: в выборе — 1-9 для старта чтения. В чтении — 1: Трудно, 2: Средне, 3: Отлично, Esc: Назад.")
+
+    # ============ TAB: КОЛЛЕКЦИЯ ============
+    with tab_collection:
+        query = st.text_input("Поиск по всей коллекции", key="all_texts_search", placeholder="Введите часть текста...")
+        all_items = st.session_state.phrases_data
+        if query:
+            low_q = query.lower()
+            all_items = [p for p in all_items if low_q in p["text"].lower()]
+        for phrase in all_items:
+            complexity_emoji = get_complexity_emoji(phrase["complexity"], st.session_state.child_age)
+            status_icon = "✅" if phrase.get("is_read") else "📖"
+            st.markdown(f"{status_icon} {complexity_emoji} {phrase['complexity']}: {truncate_text(phrase['text'], 140)}")
+
+    # ============ TAB: ДОБАВИТЬ ============
+    with tab_add, st.form(key="add_text_form", clear_on_submit=True):
+        new_text = st.text_area("Введите новый текст для добавления в коллекцию:", height=180)
+        col1, col2 = st.columns(2)
+        with col1:
+            save_only = st.form_submit_button("💾 Сохранить в коллекцию", use_container_width=True)
+        with col2:
+            save_and_start = st.form_submit_button("📖 Сохранить и начать чтение", use_container_width=True)
+        if save_only or save_and_start:
+            if new_text.strip():
+                success = add_new_text_to_collection(new_text.strip())
+                if success and save_and_start:
+                    start_reading_session(new_text.strip())
+            else:
+                st.error("Пожалуйста, введите текст!")
+
+    # ============ TAB: БЫСТРОЕ ЧТЕНИЕ ============
+    with tab_quick, st.form(key="quick_reading_form", clear_on_submit=True):
+        custom_text = st.text_area("Введите текст для чтения (без сохранения):", height=180)
+        start_reading = st.form_submit_button("Начать чтение", use_container_width=True)
+        if start_reading:
+            if custom_text.strip():
+                start_reading_session(custom_text.strip())
+            else:
+                st.error("Пожалуйста, введите текст!")
+
+    # ============ TAB: НАСТРОЙКИ ============
+    with tab_settings:
+        st.subheader("Параметры сложности и отображения")
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             new_age = st.selectbox(
                 "Возраст ребенка",
@@ -524,78 +766,63 @@ def show_text_selection():
                 index=[6, 7, 8, 9, 10, 11].index(st.session_state.child_age),
                 help="Возраст влияет на оценку сложности текста",
             )
-
             if new_age != st.session_state.child_age:
                 st.session_state.child_age = new_age
-
-                # Save configuration to file
                 config = {
                     "child_age": st.session_state.child_age,
                     "use_cognitive_load": st.session_state.use_cognitive_load,
                     "use_children_algorithm": st.session_state.use_children_algorithm,
                 }
                 save_config(config)
-
-                # Update complexity (preserve file order)
                 update_phrases_complexity()
-
                 st.success(f"Возраст изменен на {new_age} лет. Сложность пересчитана!")
                 logger.info(f"Age changed to {new_age}, complexity recalculated (file order preserved)")
-                st.rerun()  # Rerun to show updated complexity values
-
+                st.rerun()
         with col2:
             new_cognitive = st.checkbox(
                 "Учитывать длину текста",
                 value=st.session_state.use_cognitive_load,
                 help="Для младших детей (6-7 лет) длина текста сильно влияет на сложность",
             )
-
             if new_cognitive != st.session_state.use_cognitive_load:
                 st.session_state.use_cognitive_load = new_cognitive
-
-                # Save configuration to file
                 config = {
                     "child_age": st.session_state.child_age,
                     "use_cognitive_load": st.session_state.use_cognitive_load,
                     "use_children_algorithm": st.session_state.use_children_algorithm,
                 }
                 save_config(config)
-
-                # Update complexity (preserve file order)
                 update_phrases_complexity()
-
                 status = "включен" if new_cognitive else "выключен"
                 st.success(f"Учет длины текста {status}. Сложность пересчитана!")
                 logger.info(f"Cognitive load setting changed to {new_cognitive}, complexity recalculated (file order preserved)")
-                st.rerun()  # Rerun to show updated complexity values
-
+                st.rerun()
         with col3:
             new_algorithm = st.checkbox(
                 "🆕 Детский алгоритм",
                 value=st.session_state.use_children_algorithm,
                 help="Улучшенный алгоритм специально для детской литературы (рекомендуется)",
             )
-
             if new_algorithm != st.session_state.use_children_algorithm:
                 st.session_state.use_children_algorithm = new_algorithm
-
-                # Save configuration to file
                 config = {
                     "child_age": st.session_state.child_age,
                     "use_cognitive_load": st.session_state.use_cognitive_load,
                     "use_children_algorithm": st.session_state.use_children_algorithm,
                 }
                 save_config(config)
-
-                # Update complexity (preserve file order)
                 update_phrases_complexity()
-
                 algorithm_name = "детский (улучшенный)" if new_algorithm else "стандартный"
                 st.success(f"Алгоритм изменен на {algorithm_name}. Сложность пересчитана!")
                 logger.info(f"Algorithm changed to children={new_algorithm}, complexity recalculated (file order preserved)")
-                st.rerun()  # Rerun to show updated complexity values
+                st.rerun()
 
-        # Show current settings info
+        st.checkbox(
+            "🎨 Детский режим (крупнее кнопки, мягкие цвета)",
+            key="child_mode",
+            help="Делает интерфейс ещё дружелюбнее для ребёнка",
+        )
+
         config = load_config()
         last_updated = config.get("last_updated", "Неизвестно")
         try:
@@ -606,9 +833,7 @@ def show_text_selection():
                 last_updated_str = last_updated
         except Exception:
             last_updated_str = str(last_updated)
-
         algorithm_name = "🆕 Детский (улучшенный)" if st.session_state.use_children_algorithm else "📚 Стандартный"
-
         st.info(
             f"""
         **Текущие настройки:**
@@ -628,187 +853,6 @@ def show_text_selection():
         """
         )
 
-    col1, col2 = st.columns([1, 1], gap="large")
-
-    with col1:
-        st.subheader("📚 Непрочитанные тексты")
-
-        # Get unread phrases and sort by complexity for display only
-        unread_phrases = [(idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data) if not phrase_data["is_read"]]
-
-        # Sort unread phrases by complexity for better learning progression
-        unread_phrases.sort(key=lambda x: x[1]["complexity"])
-
-        unread_count = 0
-        unread_buttons = []  # Для шорткатов
-
-        for _display_idx, (original_idx, phrase_data) in enumerate(unread_phrases):
-            unread_count += 1
-            with st.container():
-                st.markdown(f"**{unread_count}. {truncate_text(phrase_data['text'], 100)}**")
-                complexity_emoji = get_complexity_emoji(phrase_data["complexity"], st.session_state.child_age)
-                st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}")
-
-                unique_key = f"unread_button_{original_idx}_{hash(phrase_data['text']) % 10000}"
-
-                if st.button(
-                    "✅ Отметить как прочитанное",
-                    key=unique_key,
-                    type="secondary",
-                    use_container_width=True,
-                ):
-                    logger.info(f"User marked phrase as READ: '{phrase_data['text'][:50]}...' (original index: {original_idx})")
-                    old_status = phrase_data["is_read"]
-                    phrase_data["is_read"] = True
-                    phrase_data["read_date"] = datetime.now().isoformat()
-                    logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} with date {phrase_data['read_date']}")
-
-                    save_phrases(st.session_state.phrases_data)
-
-                    try:
-                        with open(PHRASES_FILE, encoding="utf-8") as f:
-                            saved_data = json.load(f)
-                            for saved_phrase in saved_data:
-                                if saved_phrase["text"] == phrase_data["text"]:
-                                    if saved_phrase.get("is_read", False):
-                                        logger.info("Verified: phrase was successfully saved as read")
-                                    else:
-                                        logger.error("ERROR: phrase was not saved as read!")
-                                    break
-                    except Exception as verify_error:
-                        logger.warning(f"Could not verify save: {verify_error}")
-
-                    logger.info("Successfully saved phrase status")
-                    st.success("Текст отмечен как прочитанный! ✅")
-                    st.session_state.need_rerun = True
-
-                start_button = st.button(
-                    "Начать чтение",
-                    key=f"unread_start_button_{original_idx}_{hash(phrase_data['text']) % 10000}",
-                    on_click=start_reading_session,
-                    args=(phrase_data["text"],),
-                    type="primary",
-                    use_container_width=True,
-                )
-                unread_buttons.append(start_button)
-
-        if unread_count == 0:
-            st.info("Все тексты прочитаны! 🎉")
-
-        logger.info(f"Displayed {unread_count} unread phrases in left column")
-
-    with col2:
-        st.subheader("✅ Прочитанные тексты")
-
-        # Get read phrases and sort by read_date (newest first)
-        read_phrases = [(idx, phrase_data) for idx, phrase_data in enumerate(st.session_state.phrases_data) if phrase_data["is_read"]]
-
-        # Sort by read_date (newest first), handle None values
-        read_phrases.sort(key=lambda x: x[1].get("read_date", ""), reverse=True)
-
-        read_count = len(read_phrases)
-
-        for _display_idx, (idx, phrase_data) in enumerate(read_phrases):
-            with st.container():
-                # Display phrase text
-                st.markdown(f"**{truncate_text(phrase_data['text'], 100)}**")
-
-                # Display complexity and read date
-                read_date_str = ""
-                if phrase_data.get("read_date"):
-                    try:
-                        read_date = datetime.fromisoformat(phrase_data["read_date"])
-                        read_date_str = f" • Прочитано: {read_date.strftime('%d.%m.%Y %H:%M')}"
-                    except ValueError:
-                        read_date_str = f" • Прочитано: {phrase_data['read_date']}"
-
-                complexity_emoji = get_complexity_emoji(phrase_data["complexity"], st.session_state.child_age)
-                st.caption(f"Сложность: {complexity_emoji} {phrase_data['complexity']}{read_date_str}")
-
-                unique_key = f"read_button_{idx}_{hash(phrase_data['text']) % 10000}"
-
-                if st.button(
-                    "📚 Отметить как непрочитанное",
-                    key=unique_key,
-                    type="secondary",
-                    use_container_width=True,
-                ):
-                    logger.info(f"User marked phrase as UNREAD: '{phrase_data['text'][:50]}...' (index: {idx})")
-                    old_status = phrase_data["is_read"]
-                    phrase_data["is_read"] = False
-                    phrase_data["read_date"] = None
-                    logger.info(f"Changed phrase status from {old_status} to {phrase_data['is_read']} and reset read_date")
-
-                    save_phrases(st.session_state.phrases_data)
-
-                    try:
-                        with open(PHRASES_FILE, encoding="utf-8") as f:
-                            saved_data = json.load(f)
-                            for saved_phrase in saved_data:
-                                if saved_phrase["text"] == phrase_data["text"]:
-                                    if not saved_phrase.get("is_read", True):
-                                        logger.info("Verified: phrase was successfully saved as unread")
-                                    else:
-                                        logger.error("ERROR: phrase was not saved as unread!")
-                                    break
-                    except Exception as verify_error:
-                        logger.warning(f"Could not verify save: {verify_error}")
-
-                    logger.info("Successfully saved phrase status")
-                    st.success("Текст отмечен как непрочитанный! 📚")
-                    st.session_state.need_rerun = True
-
-                st.button(
-                    "Читать снова",
-                    key=f"read_again_button_{idx}_{hash(phrase_data['text']) % 10000}",
-                    on_click=start_reading_session,
-                    args=(phrase_data["text"],),
-                    type="secondary",
-                    use_container_width=True,
-                )
-
-        if read_count == 0:
-            st.info("Пока нет прочитанных текстов")
-
-        logger.info(f"Displayed {read_count} read phrases in right column")
-
-    logger.info(f"show_text_selection completed: {unread_count} unread, {read_count} read phrases")
-
-    # Add new text section
-    st.divider()
-    with st.expander("➕ Добавить новый текст в коллекцию", expanded=False), st.form(key="add_text_form", clear_on_submit=True):
-        new_text = st.text_area("Введите новый текст для добавления в коллекцию:", height=150)
-
-        col1, col2 = st.columns(2)
-        with col1:
-            save_only = st.form_submit_button("💾 Сохранить в коллекцию", use_container_width=True)
-
-        with col2:
-            save_and_start = st.form_submit_button("📖 Сохранить и начать чтение", use_container_width=True)
-
-        # Handle form submissions
-        if save_only or save_and_start:
-            if new_text.strip():
-                success = add_new_text_to_collection(new_text.strip())
-                if success and save_and_start:
-                    start_reading_session(new_text.strip())
-            else:
-                st.error("Пожалуйста, введите текст!")
-
-    # Custom text input for immediate reading
-    with st.expander("🚀 Быстрое чтение (без сохранения)", expanded=False), st.form(key="quick_reading_form", clear_on_submit=True):
-        custom_text = st.text_area("Введите текст для чтения:", height=150)
-        start_reading = st.form_submit_button("Начать чтение", use_container_width=True)
-
-        if start_reading:
-            if custom_text.strip():
-                start_reading_session(custom_text.strip())
-            else:
-                st.error("Пожалуйста, введите текст!")
-
-    # Info about shortcuts
-    st.info("Шорткаты: В выборе — цифры 1-9 для старта чтения. В чтении — 1: Трудно, 2: Средне, 3: Отлично, Esc: Назад.")
-
 
 def truncate_text(text, max_length):
     return text[:max_length] + "..." if len(text) > max_length else text
@@ -816,7 +860,10 @@ def truncate_text(text, max_length):
 
 def show_reading_interface():
     """Display reading interface"""
-    st.markdown(STYLE, unsafe_allow_html=True)
+    # Apply base style + optional child theme
+    st.markdown(BASE_STYLE, unsafe_allow_html=True)
+    if st.session_state.get("child_mode"):
+        st.markdown(CHILD_STYLE, unsafe_allow_html=True)
     state = st.session_state.reading_state
     current_level = state["current_level"]
     level_data = state["levels"][current_level]
@@ -876,7 +923,10 @@ def show_reading_interface():
 
 def show_results():
     """Display final results screen"""
-    st.markdown(STYLE, unsafe_allow_html=True)
+    # Apply base style + optional child theme
+    st.markdown(BASE_STYLE, unsafe_allow_html=True)
+    if st.session_state.get("child_mode"):
+        st.markdown(CHILD_STYLE, unsafe_allow_html=True)
     state = st.session_state.reading_state
 
     st.title("Результаты обучения")

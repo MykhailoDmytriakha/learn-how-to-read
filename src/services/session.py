@@ -65,3 +65,15 @@ def init_session_state() -> None:
             "phrases_data already exists with %d phrases; keeping existing state",
             len(st.session_state.phrases_data),
         )
+
+    # UI state: control how many phrases to show on selection screen
+    if "show_all_phrases" not in st.session_state:
+        st.session_state.show_all_phrases = False
+
+    if "phrases_limit" not in st.session_state:
+        # Default limit for "next N by complexity"
+        st.session_state.phrases_limit = 20
+
+    # Visual mode: child-friendly theme toggle
+    if "child_mode" not in st.session_state:
+        st.session_state.child_mode = False
